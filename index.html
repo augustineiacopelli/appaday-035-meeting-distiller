@@ -10,6 +10,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black">
 <link rel="manifest" href="https://augustineiacopelli.github.io/appaday/manifests/035.webmanifest">
 <script src="https://augustineiacopelli.github.io/appaday/save.js" defer></script>
+<script src="https://augustineiacopelli.github.io/appaday/keys.js" data-app="035" data-legacy-key="md_apikey" data-accent="#C8401A" defer></script>
 <title>Meeting Distiller | AppADay 035</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
@@ -287,10 +288,7 @@
     </div>
     <div class="modal-body">
 
-      <div class="modal-field">
-        <label>Anthropic API Key</label>
-        <input class="modal-input" type="password" id="apiKeyInput" placeholder="sk-ant-...">
-      </div>
+      <div class="modal-field"><div id="keyMount"><label>The key manager is loading. If this stays, check your connection and reload.</label></div></div>
 
       <div class="modal-divider"></div>
       <span class="modal-section-label">Manager Summary</span>
@@ -325,7 +323,6 @@
 <script>
 (function() {
 
-  var SK_APIKEY    = 'md_apikey';
   var SK_CONTACTS  = 'md_contacts';
   var SK_MGR_NAME  = 'md_mgr_name';
   var SK_MGR_EMAIL = 'md_mgr_email';
@@ -418,7 +415,7 @@
 
   // Settings modal
   window.openSettings = function() {
-    document.getElementById('apiKeyInput').value = sGet(SK_APIKEY) || '';
+    if (window.AppKeys) window.AppKeys.mountSettings(document.getElementById('keyMount'));
     document.getElementById('managerNameInput').value = sGet(SK_MGR_NAME) || '';
     document.getElementById('managerEmailInput').value = sGet(SK_MGR_EMAIL) || '';
     document.getElementById('teamSummaryToggle').checked = sGet(SK_MGR_ON) === '1';
@@ -426,7 +423,6 @@
   };
   window.closeSettings = function() { document.getElementById('settingsModal').classList.remove('active'); };
   window.saveSettings = function() {
-    sSet(SK_APIKEY, document.getElementById('apiKeyInput').value.trim());
     sSet(SK_MGR_NAME, document.getElementById('managerNameInput').value.trim());
     sSet(SK_MGR_EMAIL, document.getElementById('managerEmailInput').value.trim());
     sSet(SK_MGR_ON, document.getElementById('teamSummaryToggle').checked ? '1' : '0');
@@ -450,8 +446,8 @@
     clearError();
     var notes = document.getElementById('notesInput').value.trim();
     if (!notes) { showError('Paste some meeting notes first.'); return; }
-    var apiKey = sGet(SK_APIKEY);
-    if (!apiKey) { showError('Add your Anthropic API key in \u2699\uFE0F Settings first.'); return; }
+    var apiKey = window.AppKeys ? await window.AppKeys.get() : null;
+    if (!apiKey) { showError('Add your Claude API key with the gear button to continue.'); return; }
     setLoading(true);
     var sys = 'You are a meeting notes analyst. Extract structured information from raw meeting notes and return ONLY valid JSON with no markdown, no code fences, no preamble. Schema:\n{"summary":"2-3 sentence summary","decisions":["..."],"action_items":[{"task":"...","owner":"Person Name or Unknown","deadline":"date or timeframe or null"}],"open_questions":["..."]}.\nIf a field has no content use an empty array. Infer owners from context. Be specific about deadlines when mentioned.';
     try {
