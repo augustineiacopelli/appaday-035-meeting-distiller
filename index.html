@@ -10,6 +10,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black">
 <link rel="manifest" href="https://augustineiacopelli.github.io/appaday/manifests/035.webmanifest">
 <script src="https://augustineiacopelli.github.io/appaday/save.js" defer></script>
+<script src="https://augustineiacopelli.github.io/appaday/models.js"></script>
 <script src="https://augustineiacopelli.github.io/appaday/keys.js" data-app="035" data-legacy-key="md_apikey" data-accent="#C8401A" defer></script>
 <title>Meeting Distiller | AppADay 035</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -454,7 +455,7 @@
       var resp = await fetch('https://api.anthropic.com/v1/messages', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', 'x-api-key': apiKey, 'anthropic-version': '2023-06-01', 'anthropic-dangerous-direct-browser-access': 'true' },
-        body: JSON.stringify({ model: 'claude-sonnet-5-5', max_tokens: 4096, system: sys, messages: [{ role: 'user', content: 'Distill these meeting notes:\n\n' + notes }] })
+        body: JSON.stringify({ model: (window.AppModels ? window.AppModels.id('sonnet') : ''), max_tokens: 4096, system: sys, messages: [{ role: 'user', content: 'Distill these meeting notes:\n\n' + notes }] })
       });
       if (!resp.ok) { var err = await resp.json().catch(function(){return{};}); throw new Error(err.error ? err.error.message : 'API error ' + resp.status); }
       var data = await resp.json();
@@ -654,15 +655,6 @@
 
 })();
 
-async function getModel(tier = 'sonnet') {
-  try {
-    const response = await fetch('../config.json');
-    const config = await response.json();
-    return config.models[tier];
-  } catch {
-    return 'claude-sonnet-5-5';
-  }
-}
 </script>
 </body>
 </html>

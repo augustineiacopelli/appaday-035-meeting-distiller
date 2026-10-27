@@ -23,7 +23,7 @@ The standout feature is the **Send Deliverables** section at the bottom. Each pe
 
 ## Stack
 
-Single-file HTML/CSS/JS — no frameworks, no build step. Anthropic Claude API (`claude-sonnet-4-20250514`) via direct browser fetch. Deployable to GitHub Pages as-is.
+Single-file HTML/CSS/JS — no frameworks, no build step. Anthropic Claude API (the current Claude Sonnet model) via direct browser fetch. Deployable to GitHub Pages as-is.
 
 ## Setup
 
